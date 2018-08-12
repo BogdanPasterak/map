@@ -1,28 +1,60 @@
 .App {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-flow: row;
+}
+
+.action {
+  width: 30vw;
+  min-width: 220px;
+  background-color: #ddd;
+}
+
+.map-div {
+  width: 70vw;
+  background-color: #aaa;
+}
+
+.map {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 60px);
+}
+
+.full-h {
+  height: 100%;
+}
+
+.title {
+  height: 50px;
+  width: 100%;
   text-align: center;
+  padding: 5px 0;
+  background-color: #000;
+  color: #ddd;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
-}
-
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
-}
-
-.App-title {
+h1 {
   font-size: 1.5em;
+  font-weight: bold;
+  letter-spacing: 3px;
+  text-transform: uppercase;
 }
 
-.App-intro {
-  font-size: large;
-}
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+@media screen and (max-width: 550px) {
+  .App {
+    flex-flow: column-reverse;
+  }
+  .action {
+    width: 100vw;
+    height: 25vh;
+  }
+  .map-div {
+    width: 100vw;
+    height: 75vh;
+  }
+  .map {
+    height: calc(75vh - 60px)
+  }
 }
