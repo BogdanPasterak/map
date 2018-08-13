@@ -7,30 +7,13 @@ class App extends Component {
     super(props);
     this.state = {
       places: [
-        { position: {
-           "lat" : 55.05716,
-           "lng" : -7.938365
-          },
-          title: "Glenveagh National Park "
-        },
-        { position: {
-         "lat" : 54.9507574,
-         "lng" : -7.7238267
-          },
-          title: "Nr. 0"
-        },
-        { position: {
-         "lat" : 55.134083,
-         "lng" : -7.8417757
-        }},
-        { position: {
-         "lat" : 54.9290853,
-         "lng" : -7.8085484
-        }},
-        { position: {
-         "lat" : 54.9495469,
-         "lng" : -7.7378217
-        }}
+        { place: "Old Brookcourt, Letterkenny" },
+        { place: "Glenveagh National Park"},
+        { place: "Letterkenny Institute of Technology"},
+        { place: "Grianan of Aileach"},
+        { place: "Beltany Stone Circle" },
+        { place: "Hiring Fair Memorial, Letterkenny" },
+        { place: "Mount Errigal, Money More" }
       ]
 
     }
@@ -49,7 +32,9 @@ class App extends Component {
           </div>
 
 
-            <MapContainer />
+            <MapContainer
+              places = {this.state.places}
+            />
 
 
         </div>
