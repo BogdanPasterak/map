@@ -9,7 +9,6 @@ export class MapContainer extends Component {
     this.state = {
       places: [],
       bounds: {},
-      info:  false,
       infoMarker: {},
       infoVisible: false,
       infoTitle: 'arker.title'
@@ -17,9 +16,12 @@ export class MapContainer extends Component {
   }
 
   componentDidMount() {
-    this.setState({places: this.props.places})
+    this.setState({places: this.props.places});
     //console.log("componentDidMount")
-    //console.log(this.state)
+    console.log(this.props.google.maps.places.Autocomplete);
+    console.log(document.getElementById('input-text'));
+    var aaa = new this.props.google.maps.places.Autocomplete(document.getElementById('input-text'));
+    console.log(aaa)
   }
 
   componentDidUpdate(prevProps) {
@@ -38,22 +40,11 @@ export class MapContainer extends Component {
     }
 
     const onReady = (mapProps, map ) => {
-      console.log(mapProps)
       // I complete the places data with Geocoder
       var gc = new mapProps.google.maps.Geocoder();
       var bounds = new mapProps.google.maps.LatLngBounds();
-      var service = new mapProps.google.maps.places.PlacesService(map);
       var places = this.state.places;
-      console.log(service)
       const self = this;
-
-
-                service.getDetails({
-                  placeId: "ChIJq2a91qqbX0gRrW_oBUf6Xy8"
-                }), function (p, s) {
-                    console.log(s);
-                    console.log(p);
-                }
 
       places.map((place, index) => (
         // I read data for every place
@@ -74,20 +65,6 @@ export class MapContainer extends Component {
               bounds.extend(place.location);
               // If this last place, update the data and fit Map
               if (places.length - 1 === index){
-                /*
-                service.getDetails({
-                  placeId: places[1].place_id
-                }), function (p, s) {
-                  if ( s === "OK") {
-                    console.log("details");
-                    console.log(p);
-                  } else {
-                    console.log('I can not read the details place');
-                    console.log(places[1].place_id);
-                    console.log(status);
-                  }
-                }
-                */
                 map.fitBounds(bounds)
                 self.setState({bounds, places});
               }
@@ -101,20 +78,37 @@ export class MapContainer extends Component {
     }
 
     const onMarkerClick = (props, marker, e) => {
-      //console.log(props)
-      //console.log(marker)
-      //console.log(e)
-      this.setState({
-        info: true,
-        infoMarker: marker,
-        infoVisible: true,
-        infoTitle: marker.description
-      })
+      //console.log( this.state.infoMarker == marker);
+
+      if (this.state.infoMarker !== marker)
+      {
+        this.setState({
+          infoMarker: marker,
+          infoVisible: true,
+          infoTitle: marker.description
+      });} else {
+        this.setState({infoVisible: false});
+      }
     }
-    const onInfoOpen = (mapProps, map, e) => {
-      console.log('mapProps')
+    const onInfoOpen = () => {
+      /*
+      console.log(this.state.infoMarker.place_id);
+
+      fetch('https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/details/json?placeid=ChIJq2a91qqbX0gRrW_oBUf6Xy8&key=')
+        .then(function(myJson) {
+          console.log(myJson);
+        })
+        .catch(error => console.error(`Fetch Error =\n`, error));
+      */
+
+      //fetch('https://cors-anywhere.herokuapp.com/http://s0.geograph.org.uk/photos/05/15/051517_a46601a5.jpg')
+
       console.log('onOpen')
+
+
+
     }
+
     const windowHasClosed = (mapProps, map, clickEvent) => {
       console.log('windowHasClosed')
     }
@@ -122,44 +116,55 @@ export class MapContainer extends Component {
 
 
     return (
-
-    	<div className="map">
-          <Map
-            google={this.props.google}
-            initialCenter={{ lat: 54.95, lng: -7.73 }}
-            zoom={12}
-            bounds={this.state.bounds}
-            onReady={ onReady }
-            onClick={ mapClicked }
-          >
-            { this.state.places.length &&
-              this.state.places[0].place_id &&
-              this.state.places.map((place, index) => (
-                // data for Markers are loaded in fun onReady
-                // I create them when the data is ready
-                <Marker
-                  key={index}
-                  title={place.title}
-                  position={place.location}
-                  description={place.place}
-                  place_id={place.place_id}
-                  onClick={onMarkerClick}
-                />
-            ))}
-            <InfoWindow
-              onOpen={onInfoOpen}
-              onClose={windowHasClosed}
-              marker={this.state.infoMarker}
-              visible={this.state.infoVisible}
-            >
-              <div>
-              <p>{this.state.infoTitle}</p>
-              </div>
-            </InfoWindow>
-
-          </Map>
+      <div className="full-v">
+        <div className="action">
+          <input className="input-text" id="input-text" type="text" />
+        </div>
+        <div className="map-div">
+          <div className="title">
+            <h1>My Neighborhood</h1>
+          </div>
+        	<div className="map">
+              <Map
+                google={this.props.google}
+                initialCenter={{ lat: 54.95, lng: -7.73 }}
+                zoom={12}
+                bounds={this.state.bounds}
+                onReady={ onReady }
+                onClick={ mapClicked }
+              >
+                { this.state.places.length &&
+                  this.state.places[0].place_id &&
+                  this.state.places.map((place, index) => (
+                    // data for Markers are loaded in fun onReady
+                    // I create them when the data is ready
+                    <Marker
+                      key={index}
+                      title={place.title}
+                      position={place.location}
+                      description={place.place}
+                      place_id={place.place_id}
+                      onClick={onMarkerClick}
+                    />
+                ))}
+                <InfoWindow
+                  onOpen={onInfoOpen}
+                  onClose={windowHasClosed}
+                  marker={this.state.infoMarker}
+                  visible={this.state.infoVisible}
+                >
+                  <div>
+                    <h3>{this.state.infoTitle}</h3>
+                    <div className="thumbnail">
+                      <img className="thumbnail" src="http://s0.geograph.org.uk/photos/05/15/051517_a46601a5.jpg" />
+                    </div>
+                    <p>{this.state.infoMarker.place_id}</p>
+                  </div>
+                </InfoWindow>
+              </Map>
+          </div>
+        </div>
       </div>
-
     );
   }
 }

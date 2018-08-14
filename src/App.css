@@ -1,8 +1,6 @@
 .App {
   width: 100vw;
   min-height: 100vh;
-  display: flex;
-  flex-flow: row;
 }
 
 .action {
@@ -26,6 +24,13 @@
   height: 100%;
 }
 
+.full-v {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-flow: row;
+}
+
 .title {
   height: 50px;
   width: 100%;
@@ -33,6 +38,16 @@
   padding: 5px 0;
   background-color: #000;
   color: #ddd;
+}
+
+.thumbnail {
+  width: 120px;
+  height: 80px;
+}
+
+.input-text {
+  width: 90%;
+  margin: 15px 0 10px 5%;
 }
 
 h1 {
@@ -43,7 +58,7 @@ h1 {
 }
 
 @media screen and (max-width: 550px) {
-  .App {
+  .full-v {
     flex-flow: column-reverse;
   }
   .action {
