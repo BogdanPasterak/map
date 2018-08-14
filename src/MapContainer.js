@@ -9,8 +9,10 @@ export class MapContainer extends Component {
     this.state = {
       places: [],
       bounds: {},
-      info: {},
-      vis: false
+      info:  false,
+      infoMarker: {},
+      infoVisible: false,
+      infoTitle: 'arker.title'
     }
   }
 
@@ -32,26 +34,23 @@ export class MapContainer extends Component {
             //console.log(this.props.google)
 
     const mapClicked = (mapProps, map, clickEvent) => {
-              //console.log(mapProps)
-              //console.log(map)
-              //console.log(this.state.bounds)
-      //console.log(this.state.bounds.getCenter().lat() + "  " + this.state.bounds.getCenter().lng() + "  " + this.state.bounds);
-
+      this.setState({infoVisible: false})
     }
 
     const onReady = (mapProps, map ) => {
-
-      //console.log('onReady')
+      // I complete the places data with Geocoder
       var gc = new mapProps.google.maps.Geocoder();
       var bounds = new mapProps.google.maps.LatLngBounds();
       var places = this.state.places;
       const self = this;
 
       places.map((place, index) => (
+        // I read data for every place
         gc.geocode(
           { address: place.place,
             componentRestrictions: {locality: "County Donegal Ireland"}
           }, function(result, status) {
+            // and if OK
             if (status === "OK") {
               place.place_id = result[0].place_id;
               place.formatted_address = result[0].formatted_address;
@@ -62,26 +61,38 @@ export class MapContainer extends Component {
               place.address_components = result[0].address_components;
               place.types = result[0].types;
               bounds.extend(place.location);
+              // If this last place, update the data and fit Map
               if (places.length - 1 === index){
                 map.fitBounds(bounds)
                 self.setState({bounds, places});
               }
 
             } else {
+              console.log('I can not read the place data');
+              console.log(place.place);
               console.log(status);
-            }
-          }
-        )
+        }})
       ));
-
     }
 
     const onMarkerClick = (props, marker, e) => {
       //console.log(props)
       //console.log(marker)
       //console.log(e)
-      this.setState({info: marker, vis: true})
+      this.setState({
+        info: true,
+        infoMarker: marker,
+        infoVisible: true,
+        infoTitle: marker.description
+      })
     }
+    const onInfoOpen = (mapProps, map, e) => {
+      console.log('onOpen')
+    }
+    const windowHasClosed = (mapProps, map, clickEvent) => {
+      console.log('windowHasClosed')
+    }
+
 
 
     return (
@@ -93,45 +104,32 @@ export class MapContainer extends Component {
             zoom={12}
             bounds={this.state.bounds}
             onReady={ onReady }
-            onClick={mapClicked}
+            onClick={ mapClicked }
           >
-
-
-            {(this.state)  && (
-              console.log(this.state)
-              //this.fb('Cos,2,3')
-
-              //onChangeZoom={fb}
-              //console.log(this.props)
-              //<Listing places={this.state.places} />
-            )}
-
             { this.state.places.length &&
               this.state.places[0].place_id &&
               this.state.places.map((place, index) => (
-                //console.log(place.place_id)
+                // data for Markers are loaded in fun onReady
+                // I create them when the data is ready
                 <Marker
                   key={index}
-                  title={place.place}
+                  title={place.title}
                   position={place.location}
+                  description={place.place}
                   place_id={place.place_id}
                   onClick={onMarkerClick}
                 />
             ))}
-            { this.state.info && (
-                //console.log(this.state.info.position),
-              <InfoWindow
-                marker={this.state.info}
-
-                visible={this.state.vis}
-
-                //onClose={this.onInfoWindowClose}
-              >
-                <div>
-                <p>Dupa</p>
-                </div>
-              </InfoWindow>
-            )}
+            <InfoWindow
+              onOpen={onInfoOpen}
+              onClose={windowHasClosed}
+              marker={this.state.infoMarker}
+              visible={this.state.infoVisible}
+            >
+              <div>
+              <p>{this.state.infoTitle}</p>
+              </div>
+            </InfoWindow>
 
           </Map>
       </div>
