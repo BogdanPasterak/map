@@ -38,11 +38,22 @@ export class MapContainer extends Component {
     }
 
     const onReady = (mapProps, map ) => {
+      console.log(mapProps)
       // I complete the places data with Geocoder
       var gc = new mapProps.google.maps.Geocoder();
       var bounds = new mapProps.google.maps.LatLngBounds();
+      var service = new mapProps.google.maps.places.PlacesService(map);
       var places = this.state.places;
+      console.log(service)
       const self = this;
+
+
+                service.getDetails({
+                  placeId: "ChIJq2a91qqbX0gRrW_oBUf6Xy8"
+                }), function (p, s) {
+                    console.log(s);
+                    console.log(p);
+                }
 
       places.map((place, index) => (
         // I read data for every place
@@ -63,6 +74,20 @@ export class MapContainer extends Component {
               bounds.extend(place.location);
               // If this last place, update the data and fit Map
               if (places.length - 1 === index){
+                /*
+                service.getDetails({
+                  placeId: places[1].place_id
+                }), function (p, s) {
+                  if ( s === "OK") {
+                    console.log("details");
+                    console.log(p);
+                  } else {
+                    console.log('I can not read the details place');
+                    console.log(places[1].place_id);
+                    console.log(status);
+                  }
+                }
+                */
                 map.fitBounds(bounds)
                 self.setState({bounds, places});
               }
@@ -87,6 +112,7 @@ export class MapContainer extends Component {
       })
     }
     const onInfoOpen = (mapProps, map, e) => {
+      console.log('mapProps')
       console.log('onOpen')
     }
     const windowHasClosed = (mapProps, map, clickEvent) => {
@@ -145,3 +171,5 @@ export default GoogleApiWrapper({
 })(MapContainer)
 
 // AIzaSyDx06paKbu3mHdx8irOe0kgVLxorL1up1M
+
+//placeId: "ChIJq2a91qqbX0gRrW_oBUf6Xy8"
