@@ -17,10 +17,8 @@ export class MapContainer extends Component {
   }
 
   componentDidMount() {
-    this.setState({places: this.props.places});
-    //console.log("componentDidMount")
-    //console.log(this);
     this.setState({
+      places: this.props.places,
       autocomplete: new this.props.google.maps.places.Autocomplete(
         document.getElementById('input-text'))
     })
@@ -39,7 +37,6 @@ export class MapContainer extends Component {
 
     const mapClicked = (mapProps, map, clickEvent) => {
       this.setState({infoVisible: false});
-      console.log(map.zoom);
     }
 
     const onReady = (mapProps, map ) => {
@@ -78,30 +75,13 @@ export class MapContainer extends Component {
               console.log(status);
         }})
       ));
-      console.log(map)
 
+      // Set bounds in autocomplete
       var autocomplete = this.state.autocomplete;
       autocomplete.setBounds(map.getBounds());
       autocomplete.setComponentRestrictions({'country': 'IE'});
-
-
       this.setState({ autocomplete });
-      console.log(autocomplete)
 
-
-/*
-        gc.geocode(
-          { componentRestrictions: {locality: "County Donegal Ireland"}
-          }, function(r,s) {
-                console.log('tu')
-                console.log(r[0].geometry.bounds)
-                var don = new mapProps.google.maps.LatLngBounds(r[0].geometry.bounds)
-                console.log(don)
-                console.log('tu')
-
-          }
-        )
-*/
     }
 
     const onMarkerClick = (props, marker, e) => {
@@ -140,18 +120,42 @@ export class MapContainer extends Component {
       console.log('windowHasClosed')
     }
 
+    const changeTypes = () => {
+      var autocomplete = this.state.autocomplete;
+      var type = document.getElementById('selectType').value;
+      var types = [];
+
+      if (type !== "all" )
+        types.push(type);
+
+      autocomplete.setTypes(types);
+      this.setState({ autocomplete });
+    }
+
 
 
     return (
       <div className="full-v">
         <div className="action">
+          <div className="title-2">
+            <h2>Searching for a places</h2>
+          </div>
+          <div className="line">
+            <h5>Looking for</h5>
+            <select id="selectType" onChange={changeTypes} aria-label="type place">
+              <option value="all">Anything</option>
+              <option value="geocode">Place</option>
+              <option value="address">Address</option>
+              <option value="establishment">Business</option>
+            </select>
+          </div>
           <input className="input-text" id="input-text" type="text" />
         </div>
         <div className="map-div">
           <div className="title">
             <h1>My Neighborhood</h1>
           </div>
-        	<div className="map">
+        	<div className="map" role="application">
               <Map
                 google={this.props.google}
                 initialCenter={{ lat: 54.95, lng: -7.73 }}
@@ -183,7 +187,8 @@ export class MapContainer extends Component {
                   <div>
                     <h3>{this.state.infoTitle}</h3>
                     <div className="thumbnail">
-                      <img className="thumbnail" src="http://s0.geograph.org.uk/photos/05/15/051517_a46601a5.jpg" />
+                      <img className="thumbnail"
+                        src="http://s0.geograph.org.uk/photos/05/15/051517_a46601a5.jpg" />
                     </div>
                     <p>{this.state.infoMarker.place_id}</p>
                   </div>

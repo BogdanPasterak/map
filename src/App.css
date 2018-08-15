@@ -40,6 +40,18 @@
   color: #ddd;
 }
 
+.title-2 {
+  width: 100%;
+  text-align: center;
+}
+
+.line {
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-flow: row;
+}
+
 .thumbnail {
   width: 120px;
   height: 80px;
@@ -47,7 +59,7 @@
 
 .input-text {
   width: 90%;
-  margin: 15px 0 10px 5%;
+  margin: 10px 0 10px 5%;
 }
 
 h1 {
@@ -55,6 +67,15 @@ h1 {
   font-weight: bold;
   letter-spacing: 3px;
   text-transform: uppercase;
+}
+
+h2 {
+  font-size: 1em;
+  margin: 12px 0 5px;
+}
+
+h5 {
+  margin: 5px 25px 5px 5%;
 }
 
 @media screen and (max-width: 550px) {
