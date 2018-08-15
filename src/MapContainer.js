@@ -11,17 +11,19 @@ export class MapContainer extends Component {
       bounds: {},
       infoMarker: {},
       infoVisible: false,
-      infoTitle: 'arker.title'
+      infoTitle: 'Marker.title',
+      autocomplete: {}
     }
   }
 
   componentDidMount() {
     this.setState({places: this.props.places});
     //console.log("componentDidMount")
-    console.log(this.props.google.maps.places.Autocomplete);
-    console.log(document.getElementById('input-text'));
-    var aaa = new this.props.google.maps.places.Autocomplete(document.getElementById('input-text'));
-    console.log(aaa)
+    //console.log(this);
+    this.setState({
+      autocomplete: new this.props.google.maps.places.Autocomplete(
+        document.getElementById('input-text'))
+    })
   }
 
   componentDidUpdate(prevProps) {
@@ -36,7 +38,8 @@ export class MapContainer extends Component {
             //console.log(this.props.google)
 
     const mapClicked = (mapProps, map, clickEvent) => {
-      this.setState({infoVisible: false})
+      this.setState({infoVisible: false});
+      console.log(map.zoom);
     }
 
     const onReady = (mapProps, map ) => {
@@ -75,6 +78,30 @@ export class MapContainer extends Component {
               console.log(status);
         }})
       ));
+      console.log(map)
+
+      var autocomplete = this.state.autocomplete;
+      autocomplete.setBounds(map.getBounds());
+      autocomplete.setComponentRestrictions({'country': 'IE'});
+
+
+      this.setState({ autocomplete });
+      console.log(autocomplete)
+
+
+/*
+        gc.geocode(
+          { componentRestrictions: {locality: "County Donegal Ireland"}
+          }, function(r,s) {
+                console.log('tu')
+                console.log(r[0].geometry.bounds)
+                var don = new mapProps.google.maps.LatLngBounds(r[0].geometry.bounds)
+                console.log(don)
+                console.log('tu')
+
+          }
+        )
+*/
     }
 
     const onMarkerClick = (props, marker, e) => {
