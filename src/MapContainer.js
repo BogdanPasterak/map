@@ -9,10 +9,11 @@ export class MapContainer extends Component {
     this.state = {
       places: [],
       bounds: {},
-      infoMarker: {},
+      infoMarker: {position:{lat: 55.0575877,lng: -7.9376869}},
       infoVisible: false,
       infoTitle: 'Marker.title',
-      autocomplete: {}
+      autocomplete: {},
+      thumbnail: true
     }
   }
 
@@ -98,23 +99,9 @@ export class MapContainer extends Component {
       }
     }
     const onInfoOpen = () => {
-      /*
-      console.log(this.state.infoMarker.place_id);
-
-      fetch('https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/details/json?placeid=ChIJq2a91qqbX0gRrW_oBUf6Xy8&key=')
-        .then(function(myJson) {
-          console.log(myJson);
-        })
-        .catch(error => console.error(`Fetch Error =\n`, error));
-      */
-
-      //fetch('https://cors-anywhere.herokuapp.com/http://s0.geograph.org.uk/photos/05/15/051517_a46601a5.jpg')
-
-      console.log('onOpen')
-
-
 
     }
+
 
     const windowHasClosed = (mapProps, map, clickEvent) => {
       console.log('windowHasClosed')
@@ -131,7 +118,6 @@ export class MapContainer extends Component {
       autocomplete.setTypes(types);
       this.setState({ autocomplete });
     }
-
 
 
     return (
@@ -181,16 +167,30 @@ export class MapContainer extends Component {
                 <InfoWindow
                   onOpen={onInfoOpen}
                   onClose={windowHasClosed}
-                  marker={this.state.infoMarker}
+                  position={{ lat: 54.95, lng: -7.73 }}
+                  //marker={this.state.infoMarker}
                   visible={this.state.infoVisible}
                 >
                   <div>
                     <h3>{this.state.infoTitle}</h3>
-                    <div className="thumbnail">
-                      <img className="thumbnail"
-                        src="http://s0.geograph.org.uk/photos/05/15/051517_a46601a5.jpg" />
-                    </div>
-                    <p>{this.state.infoMarker.place_id}</p>
+                    { this.state.thumbnail && (
+                      <div className="thumbnail">
+                        <img className="thumbnail"
+                          alt={this.state.infoMarker.title}
+                          src={'img/'+this.state.infoTitle+'.jpg'}
+                        />
+                      </div>
+                    )}
+                    <a
+                      href={
+                        "https://www.google.com.sa/maps/@" +
+                          this.state.infoMarker.position.lat + "," +
+                          this.state.infoMarker.position.lng + ",14z"
+                        }
+                        target="_blank"
+                      >
+                      See this place in Google Maps
+                    </a>
                   </div>
                 </InfoWindow>
               </Map>
@@ -204,9 +204,9 @@ export class MapContainer extends Component {
 
 
 export default GoogleApiWrapper({
-  apiKey: ('')
+  apiKey: ('AIzaSyDx06paKbu3mHdx8irOe0kgVLxorL1up1M')
 })(MapContainer)
 
 // AIzaSyDx06paKbu3mHdx8irOe0kgVLxorL1up1M
-
+// AIzaSyC3afrkE4nYFJbb2zoJm_5NIzdUiqqpH7k
 //placeId: "ChIJq2a91qqbX0gRrW_oBUf6Xy8"
