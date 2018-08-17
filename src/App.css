@@ -75,7 +75,19 @@ h2 {
 }
 
 h5 {
-  margin: 5px 25px 5px 5%;
+  margin: 5px 20px 5px 5%;
+}
+
+#list {
+  padding: 10px 5%;
+  list-style: none;
+}
+
+#list li {
+  padding: 3px;
+  margin: 3px 0;
+  font-size: 0.9em;
+  background-color: #fff;
 }
 
 @media screen and (max-width: 550px) {

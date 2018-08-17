@@ -13,7 +13,9 @@ export class MapContainer extends Component {
       infoVisible: false,
       infoTitle: 'Marker.title',
       autocomplete: {},
-      thumbnail: true
+      thumbnail: true,
+      setType: {},
+      list: []
     }
   }
 
@@ -46,6 +48,9 @@ export class MapContainer extends Component {
       var bounds = new mapProps.google.maps.LatLngBounds();
       var places = this.state.places;
       const self = this;
+      var setT = new Set();
+      var setType = [];
+      var list = [];
 
       places.map((place, index) => (
         // I read data for every place
@@ -66,8 +71,15 @@ export class MapContainer extends Component {
               bounds.extend(place.location);
               // If this last place, update the data and fit Map
               if (places.length - 1 === index){
+                places.map(p => (
+                  p.types.map( t => setT.add(t))
+                ));
+                setT.forEach(t => setType.push(t))
+                places.map((pl) => (
+                  list.push(pl.place)
+                ));
                 map.fitBounds(bounds)
-                self.setState({bounds, places});
+                self.setState({bounds, places, setType, list});
               }
 
             } else {
@@ -98,14 +110,6 @@ export class MapContainer extends Component {
         this.setState({infoVisible: false});
       }
     }
-    const onInfoOpen = () => {
-
-    }
-
-
-    const windowHasClosed = (mapProps, map, clickEvent) => {
-      console.log('windowHasClosed')
-    }
 
     const changeTypes = () => {
       var autocomplete = this.state.autocomplete;
@@ -119,6 +123,27 @@ export class MapContainer extends Component {
       this.setState({ autocomplete });
     }
 
+    const listTypes = () => {
+      var type = document.getElementById('typePlace').value;
+      var list = [];
+
+      if (type === "" ) {
+        this.state.places.map((pl) => (
+          list.push(pl.place)
+        ));
+      } else {
+        this.state.places.map((pl) => (
+          (pl.types.includes(type)) ? list.push(pl.place) : ""
+        ));
+      }
+      this.setState({list});
+    }
+
+    const capitalize = (str) => {
+      str = str.replace(/_/g, " ");
+      str = str.replace(/\b\w/g, l => l.toUpperCase());
+      return str;
+    }
 
     return (
       <div className="full-v">
@@ -136,6 +161,21 @@ export class MapContainer extends Component {
             </select>
           </div>
           <input className="input-text" id="input-text" type="text" />
+          <hr />
+          <div className="line">
+            <h5>Type</h5>
+            <select id="typePlace" onChange={listTypes} aria-label="type place to show">
+              <option value="" >All</option>
+              { this.state.setType.length && this.state.setType.map((type) =>(
+                <option key={type} value={type}>{capitalize(type)}</option>
+              ))}
+            </select>
+          </div>
+          <ul id="list" >
+            { this.state.list.length && this.state.list.map(l => (
+              <li key={l} >{l}</li>
+            ))}
+          </ul>
         </div>
         <div className="map-div">
           <div className="title">
@@ -165,10 +205,8 @@ export class MapContainer extends Component {
                     />
                 ))}
                 <InfoWindow
-                  onOpen={onInfoOpen}
-                  onClose={windowHasClosed}
-                  position={{ lat: 54.95, lng: -7.73 }}
-                  //marker={this.state.infoMarker}
+                  //position={{ lat: 54.95, lng: -7.73 }}
+                  marker={this.state.infoMarker}
                   visible={this.state.infoVisible}
                 >
                   <div>
@@ -204,9 +242,9 @@ export class MapContainer extends Component {
 
 
 export default GoogleApiWrapper({
-  apiKey: ('GOOGLE_API_KEY')
+  apiKey: ('API_KEY')
 })(MapContainer)
 
-// 
-// 
+//
+//
 //placeId: "ChIJq2a91qqbX0gRrW_oBUf6Xy8"
