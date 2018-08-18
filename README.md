@@ -12,6 +12,8 @@ To get started developing right away:
 * install all project dependencies with `npm install`
 * start the development server with `npm start`
 
+**In the `src/MapContainer.js` file, API Key is required at the end**
+
 ## Licence
 
 License in the file [LICENCE.md](LICENCE.md)

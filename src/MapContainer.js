@@ -15,7 +15,10 @@ export class MapContainer extends Component {
       autocomplete: {},
       thumbnail: true,
       setType: {},
-      list: []
+      list: [],
+      link: "",
+      icon: -1,
+      info: {}
     }
   }
 
@@ -98,16 +101,20 @@ export class MapContainer extends Component {
     }
 
     const onMarkerClick = (props, marker, e) => {
-      //console.log( this.state.infoMarker == marker);
 
       if (this.state.infoMarker !== marker)
       {
+        var link = "https://www.google.com.sa/maps/@" +
+          marker.position.lat() + "," +
+          marker.position.lng() + ",14z";
         this.setState({
           infoMarker: marker,
           infoVisible: true,
-          infoTitle: marker.description
-      });} else {
-        this.setState({infoVisible: false});
+          infoTitle: marker.description,
+          link
+        });
+      } else {
+        this.setState({infoVisible: false, infoMarker: {position:{lat: 55.0575877,lng: -7.9376869}} });
       }
     }
 
@@ -145,6 +152,54 @@ export class MapContainer extends Component {
       return str;
     }
 
+    const onMarker = (props, marker, e) => {
+      let listEl = document.getElementById("list").getElementsByTagName( "li" );
+      //element = listEl.filter(el => el.innerText === props.description);
+      for(var i = 0; i < listEl.length; i++){
+        if(listEl[i].innerText === props.description){
+          listEl[i].style.backgroundColor = "lightgreen";
+        }
+      }
+    }
+
+    const offMarker = (props, marker, e) => {
+      let listEl = document.getElementById("list").getElementsByTagName( "li" );
+      //element = listEl.filter(el => el.innerText === props.description);
+      for(var i = 0; i < listEl.length; i++){
+        if(listEl[i].innerText === props.description){
+          listEl[i].style.backgroundColor = "white";
+        }
+      }
+    }
+
+    const liOver = (e) => {
+      var place = e.target.innerText;
+      var p = this.state.places.find(pl => pl.place === place);
+      var icon = this.state.places.indexOf(p);
+      e.target.style.backgroundColor = "lightgreen"
+
+      this.setState({icon});
+    }
+
+    const liOut = (e) => {
+      this.setState({icon: -1});
+      e.target.style.backgroundColor = "white"
+    }
+
+    const liClick = (e) => {
+      var place = this.state.places.find(p => p.place === e.target.innerText);
+      var types = place.types.map(t => capitalize(t)).join(", ");
+      var src = 'img/'+place.place+'.jpg';
+
+      this.setState({info:{
+        name: place.place,
+        address: place.formatted_address,
+        types: types,
+        src: src
+      }})
+    }
+
+
     return (
       <div className="full-v">
         <div className="action">
@@ -167,15 +222,36 @@ export class MapContainer extends Component {
             <select id="typePlace" onChange={listTypes} aria-label="type place to show">
               <option value="" >All</option>
               { this.state.setType.length && this.state.setType.map((type) =>(
-                <option key={type} value={type}>{capitalize(type)}</option>
+                <option key={type} value={type} >{capitalize(type)}</option>
               ))}
             </select>
           </div>
           <ul id="list" >
             { this.state.list.length && this.state.list.map(l => (
-              <li key={l} >{l}</li>
+              <li onMouseOver={liOver} onMouseOut={liOut} onClick={liClick} key={l} >{l}</li>
             ))}
           </ul>
+          <hr />
+          <div className="title-2">
+            <h2>Info about the chosen place</h2>
+          </div>
+          <div>
+            <div className="line">
+              <h5>Name:</h5>
+              <p>{this.state.info.name}</p>
+            </div>
+            <div className="line">
+              <h5>Address:</h5>
+              <p>{this.state.info.address}</p>
+            </div>
+            <div className="line">
+              <h5>Type:</h5>
+              <p>{this.state.info.types}</p>
+            </div>
+            <div className="foto-div">
+              <img className="foto" src={this.state.info.src} alt={this.state.info.name}/>
+            </div>
+          </div>
         </div>
         <div className="map-div">
           <div className="title">
@@ -192,18 +268,24 @@ export class MapContainer extends Component {
               >
                 { this.state.places.length &&
                   this.state.places[0].place_id &&
-                  this.state.places.map((place, index) => (
+                  this.state.places.map((place, index) =>
                     // data for Markers are loaded in fun onReady
                     // I create them when the data is ready
-                    <Marker
-                      key={index}
-                      title={place.title}
-                      position={place.location}
-                      description={place.place}
-                      place_id={place.place_id}
-                      onClick={onMarkerClick}
-                    />
-                ))}
+                    { return this.state.list.includes(place.place) && (
+                      // if on list
+                      <Marker
+                        key={index}
+                        title={place.title}
+                        position={place.location}
+                        description={place.place}
+                        place_id={place.place_id}
+                        onClick={onMarkerClick}
+                        onMouseover={onMarker}
+                        onMouseout={offMarker}
+                        icon={ this.state.icon === index ? 'img/here_.png' : 'img/here.png'}
+                      />
+                    )}
+                )}
                 <InfoWindow
                   //position={{ lat: 54.95, lng: -7.73 }}
                   marker={this.state.infoMarker}
@@ -219,14 +301,7 @@ export class MapContainer extends Component {
                         />
                       </div>
                     )}
-                    <a
-                      href={
-                        "https://www.google.com.sa/maps/@" +
-                          this.state.infoMarker.position.lat + "," +
-                          this.state.infoMarker.position.lng + ",14z"
-                        }
-                        target="_blank"
-                      >
+                    <a href={this.state.link} target="_blank" >
                       See this place in Google Maps
                     </a>
                   </div>
@@ -247,4 +322,3 @@ export default GoogleApiWrapper({
 
 //
 //
-//placeId: "ChIJq2a91qqbX0gRrW_oBUf6Xy8"
