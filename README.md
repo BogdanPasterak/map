@@ -12,6 +12,12 @@ To get started developing right away:
 * install all project dependencies with `npm install`
 * start the development server with `npm start`
 
+To run the app in production build:
+
+* build project dependencies with `npm run build`
+* start the server with `serve -s build`
+* visit `localhost:5000`
+
 **In the `src/MapContainer.js` file, API Key is required at the end**
 
 ## Licence

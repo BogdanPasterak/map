@@ -19,6 +19,25 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
+    <script type="text/javascript">
+      function gm_authFailure() {
+        var title = document.getElementsByTagName("h1")[0];
+        title.innerText = "your google api key";
+        title.style.letterSpacing = 0;
+        var divMap = document.getElementsByClassName("map")[0];
+        var node = document.createElement("div");
+        var h2 = document.createElement("h2");
+        var em = document.createElement("em");
+        var textnode = document.createTextNode("Your Api key is wrong or you forgot to put it in ");
+        em.appendChild( document.createTextNode('"src / MapContainer.js"') );
+        h2.appendChild(textnode);
+        h2.appendChild(em);
+        node.className = "title-2";
+        node.appendChild(h2);
+        divMap.innerHTML = "";
+        divMap.appendChild(node);
+      };
+    </script>
     <title>React App</title>
   </head>
   <body>
